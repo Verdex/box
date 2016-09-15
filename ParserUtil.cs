@@ -15,12 +15,14 @@ namespace Parsing
     {
         public readonly bool IsSuccessful;
         public readonly T Result;
+        public readonly ParseBuffer Buffer;
         public readonly FailData Failure;
 
-        public ParseResult( T result )
+        public ParseResult( T result, ParseBuffer buffer )
         {
             IsSuccessful = true;
             Result = result;
+            Buffer = buffer;
         }
         public ParseResult( FailData f )
         {
@@ -31,13 +33,18 @@ namespace Parsing
 
     public delegate ParseResult<T> Parser<T>( ParseBuffer buffer );
 
-    // TODO need parsing result
-    // TODO need parse source
     public static class ParserUtil
     {
         public static Parser<B> Bind<A, B>( Parser<A> parser, Func<A, Parser<B>> gen )
         {
-            
+            return buffer => 
+            {
+                var result = parser( buffer );
+                if ( result.IsSuccessful )
+                {
+                    return gen( result )( result.Buffer );
+                }
+            };
         }
     }
 }
