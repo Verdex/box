@@ -1,9 +1,18 @@
 
+using System;
+
 namespace Parsing 
 {
-    public class ParseBuffer
+    public struct ParseBuffer
     {
+        public int Index;
+        public string Text;
 
+        public ParseBuffer( string text, int index )
+        {
+            Text = text;
+            Index = index;
+        }
     }
 
     public class FailData
@@ -42,13 +51,27 @@ namespace Parsing
                 var result = parser( buffer );
                 if ( result.IsSuccessful )
                 {
-                    return gen( result )( result.Buffer );
+                    return gen( result.Result )( result.Buffer );
                 }
                 else
                 {
-                    return result;
+                    return new ParseResult<B>( null ); // TODO put some fail data up in here
                 }
             };
         }
+
+        public static Parser<char> EatChar = buffer => 
+        {
+            if ( buffer.Index < buffer.Text.Length )
+            {
+                var index = buffer.Index;
+                buffer.Index++;
+                return new ParseResult<char>( buffer.Text[index], buffer );
+            }
+            else
+            {
+                return new ParseResult<char>( null ); // TODO fail data
+            }
+        };
     }
 }
