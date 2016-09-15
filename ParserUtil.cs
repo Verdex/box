@@ -44,6 +44,10 @@ namespace Parsing
                 {
                     return gen( result )( result.Buffer );
                 }
+                else
+                {
+                    return result;
+                }
             };
         }
     }
