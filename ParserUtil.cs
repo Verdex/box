@@ -55,9 +55,14 @@ namespace Parsing
                 }
                 else
                 {
-                    return new ParseResult<B>( null ); // TODO put some fail data up in here
+                    return new ParseResult<B>( null ); // TODO put some fail data in here
                 }
             };
+        }
+
+        public static Parser<A> Unit<A>( A value )
+        {
+            return buffer => new ParseResult<A>( value, buffer );
         }
 
         public static Parser<char> EatChar = buffer => 
