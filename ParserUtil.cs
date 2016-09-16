@@ -3,6 +3,10 @@ using System;
 
 namespace Parsing 
 {
+    public struct Empty
+    {
+    }
+
     public struct ParseBuffer
     {
         public int Index;
@@ -63,7 +67,19 @@ namespace Parsing
         public static Parser<A> Unit<A>( A value )
         {
             return buffer => new ParseResult<A>( value, buffer );
-        }
+        } 
+
+        public static Parser<Empty> End = buffer => 
+        {
+            if( buffer.Index == buffer.Text.Length )
+            {
+                return new ParseResult<Empty>( new Empty(), buffer );
+            }
+            else
+            {
+                return new ParseResult<Empty>( null ); // TODO fail data
+            }
+        };
 
         public static Parser<char> EatChar = buffer => 
         {
