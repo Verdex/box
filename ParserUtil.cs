@@ -99,7 +99,18 @@ namespace Parsing
 
         public static Parser<A> Alternate( params Parser<A>[] parsers )
         {
-            
+            return buffer => 
+            {
+                foreach( var p in parsers )
+                {
+                    var result = parser( buffer );
+                    if ( result.IsSuccessful )
+                    {
+                        return new ParseResult<A>( result.Result, result.Buffer );
+                    }
+                }
+                return new ParseResult<A>( null ); // TODO fail data
+            };
         }
 
         public static Parser<char> EatChar = buffer => 
