@@ -1,5 +1,6 @@
 
 using System;
+using System.Collections.Generic;
 
 namespace Parsing 
 {
@@ -94,6 +95,14 @@ namespace Parsing
                 {
                     return new ParseResult<B>( null ); // TODO fail data
                 }
+            };
+        }
+
+        public static Parser<IEnumerable<A>> ZeroOrMore( this Parser<A> parser )
+        {
+            return buffer =>
+            {
+                
             };
         }
 
