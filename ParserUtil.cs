@@ -81,6 +81,27 @@ namespace Parsing
             }
         };
 
+        public static Parser<B> Map<A, B>( this Parser<A> parser, Func<A, B> f )
+        {
+            return buffer => 
+            {
+                var result = parser( buffer );
+                if ( result.IsSuccessful )
+                {
+                    return new ParseResult<B>( f( result.Result ), result.Buffer );
+                }
+                else
+                {
+                    return new ParseResult<B>( null ); // TODO fail data
+                }
+            };
+        }
+
+        public static Parser<A> Alternate( params Parser<A>[] parsers )
+        {
+            
+        }
+
         public static Parser<char> EatChar = buffer => 
         {
             if ( buffer.Index < buffer.Text.Length )
