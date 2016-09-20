@@ -98,21 +98,40 @@ namespace Parsing
             };
         }
 
-        public static Parser<IEnumerable<A>> ZeroOrMore( this Parser<A> parser )
+        public static Parser<IEnumerable<A>> ZeroOrMore<A>( this Parser<A> parser )
         {
             return buffer =>
             {
-                
+                var a = new List<A>();
+                var result = parser( buffer );
+                ParseBuffer? temp = null;
+                while ( result.IsSuccessful )
+                {
+                    a.Add( result.Result );
+                    result = parser( result.Buffer );
+                    if ( result.IsSuccessful )
+                    {
+                        temp = result.Buffer;
+                    }
+                }
+                if ( temp.HasValue )
+                {
+                    return new ParseResult<IEnumerable<A>>( a, temp.Value );
+                }
+                else
+                {
+                    return new ParseResult<IEnumerable<A>>( a, buffer ); 
+                }
             };
         }
 
-        public static Parser<A> Alternate( params Parser<A>[] parsers )
+        public static Parser<A> Alternate<A>( params Parser<A>[] parsers )
         {
             return buffer => 
             {
                 foreach( var p in parsers )
                 {
-                    var result = parser( buffer );
+                    var result = p( buffer );
                     if ( result.IsSuccessful )
                     {
                         return new ParseResult<A>( result.Result, result.Buffer );
