@@ -3,7 +3,7 @@ using System;
 using System.Linq;
 using System.Collections.Generic;
 
-namespace Parsing 
+namespace Box 
 {
     public struct Empty
     {
@@ -95,6 +95,22 @@ namespace Parsing
                 else
                 {
                     return new ParseResult<B>( null ); // TODO fail data
+                }
+            };
+        }
+
+        public static Parser<Maybe<A>> OneOrNone<A>( this Parser<A> parser )
+        {
+            return buffer =>
+            {
+                var result = parser( buffer );
+                if ( result.IsSuccessful )
+                {
+                    return new ParseResult<Maybe<A>>( new Maybe<A>( result.Result ), result.Buffer );
+                }
+                else
+                {
+                    return new ParseResult<Maybe<A>>( new Maybe<A>(), buffer ); 
                 }
             };
         }
