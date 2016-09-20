@@ -1,5 +1,6 @@
 
 using System;
+using System.Linq;
 using System.Collections.Generic;
 
 namespace Parsing 
@@ -96,6 +97,13 @@ namespace Parsing
                     return new ParseResult<B>( null ); // TODO fail data
                 }
             };
+        }
+
+        public static Parser<IEnumerable<A>> OneOrMore<A>( this Parser<A> parser )
+        {
+            return Bind( parser,              v  =>
+                   Bind( parser.ZeroOrMore(), vs => 
+                   Unit( new A[] { v }.Concat( vs ) ) ) );
         }
 
         public static Parser<IEnumerable<A>> ZeroOrMore<A>( this Parser<A> parser )
