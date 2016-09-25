@@ -15,13 +15,37 @@ classDef :=
 
 interfaceDef :=
 
-[[ public ]] interface << interfaceName >> [[ : << interfaceNameList >> ]]
+[[ public ]] interface << interfaceName >> [[ : << interfaceName >> * ]]
 {
-    # no constructor defs or field defs and one or more on method Def
-    # is a philosophical decision atm
-    [[ << methodDef >> + ]]
+    [[ << signature >> + ]]
 }
 
-className := << symbol >> | << symbol >> < symbol * > 
+className := << symbol >> | << symbol >> < << symbol >>  * > 
 interfaceName := className
+
+signature := << symbol >> : << type >> ;
+
+type := << symbol >> | << type >> -> << type >> | ( << type >> )
+
+constructorDef :=
+
+[[ [ mode << symbol >> ] ]]
+[[ public ]] cons : << type >>  ( << symbol >> * )
+{
+    << statement >> *
+}
+
+methodDef := 
+
+[[ public ]] << symbol >> [[ < << symbol >>  * >  ]] : 
+
+namespaceDef := 
+
+namespace << symbol >> [[ . << symbolList >> ]] 
+{
+    << interfaceDef >> *
+    << classDef >> *
+    << methodDef >> *
+}
+
 
