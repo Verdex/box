@@ -1,6 +1,23 @@
 [[ ... ]] - optional ...
 << blah >> - meta variable
+# - comment
 
 classDef := 
 
-[[public]] class < class > [[ : < interface >
+[[ [mode << modeList >>] ]]
+[[ public ]] class << className >> [[ : << interfaceNameList >> ]]
+{
+    # order shouldn't matter for these
+    [[ << fieldDef >> * ]]
+    [[ << methodDef >> * ]]
+    [[ << constructorDef >> * ]]
+}
+
+[[ public ]] interface << interfaceName >> [[ : << interfaceNameList >> ]]
+{
+    # no constructor defs or field defs and one or more on method Def
+    # is a philosophical decision atm
+    [[ << methodDef >> + ]]
+}
+
+
