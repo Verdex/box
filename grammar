@@ -4,14 +4,16 @@
 
 classDef := 
 
-[[ [mode << modeList >>] ]]
-[[ public ]] class << className >> [[ : << interfaceNameList >> ]]
+[[ [mode << symbol >> * ]]
+[[ public ]] class << className >> [[ : << interfaceName >> * ]]
 {
     # order shouldn't matter for these
     [[ << fieldDef >> * ]]
     [[ << methodDef >> * ]]
     [[ << constructorDef >> * ]]
 }
+
+interfaceDef :=
 
 [[ public ]] interface << interfaceName >> [[ : << interfaceNameList >> ]]
 {
@@ -20,4 +22,6 @@ classDef :=
     [[ << methodDef >> + ]]
 }
 
+className := << symbol >> | << symbol >> < symbol * > 
+interfaceName := className
 
