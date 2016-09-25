@@ -1,0 +1,6 @@
+[[ ... ]] - optional ...
+<< blah >> - meta variable
+
+classDef := 
+
+[[public]] class < class > [[ : < interface >
