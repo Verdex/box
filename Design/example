@@ -1,0 +1,96 @@
+
+[ mode x y z ]
+public class Blah : ('a : Interface1 Interface2 ) => 'a -> 'b -> Type - InterfaceList
+{
+    [ mode x ]
+    public X : int ;
+
+    # It seems like you can shadow the class type variables
+    # with something like 'a ... 
+    # usage can be something like Wock<Concrete>( 1, 2 )
+    public Wock : a -> 'c -> SomeConcrete ( a-value c-value )
+    {
+
+        return new();
+    }
+
+    [ mode y ]
+    Jab : int -> int ( a b )
+    {
+        class OtherOtherBlah
+        {
+        }
+    }
+
+    [mode x]
+    public cons : type stuff ( param stuff )
+    {
+    }
+
+    [mode y]
+    public cons : type stuff ( param stuff )
+    {
+    }
+
+    class OtherBlah
+    {
+    }
+}
+
+public interface Blah : type stuff - InterfaceList
+{
+    signatures
+}
+
+using blah.blah;
+
+namespace blah.blah
+{
+    interfaces, classes, methods
+}
+
+foreach var x in xs 
+{
+}
+
+while boolean-expr
+{
+}
+
+if boolean-expr
+{
+}
+else if boolean-expr
+{
+}
+else
+{
+}
+
+public x : int -> int -> int ( a b )
+{
+    const x : int = 0;
+    var y : int ;
+    var z : int = 0;
+    var w : SomeClass<int> = new ( 5 ) [ mode z ] ;
+
+}
+
+do ( bind, unit )
+{
+    x <- blah ;
+    otherBlah ;
+    unit x ;
+}
+
+x : int -> seq<int> ( a )
+{
+    yield return a;
+    yield break;
+}
+
+match blah with
+{
+    x => blah.z ;
+}
+
