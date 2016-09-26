@@ -1,51 +1,51 @@
 [[ ... ]] - optional ...
-<< blah >> - meta variable
+$blah - meta variable
 # - comment
 
 classDef := 
 
-[[ [mode << symbol >> * ]]
-[[ public ]] class << className >> [[ : << interfaceName >> * ]]
+[[ [mode $symbol*]  ]]
+[[ public ]] class $className [[ : $interfaceName* ]]
 {
     # order shouldn't matter for these
-    [[ << fieldDef >> * ]]
-    [[ << methodDef >> * ]]
-    [[ << constructorDef >> * ]]
+    [[ $fieldDef* ]]
+    [[ $methodDef* ]]
+    [[ $constructorDef* ]]
 }
 
 interfaceDef :=
 
-[[ public ]] interface << interfaceName >> [[ : << interfaceName >> * ]]
+[[ public ]] interface $interfaceName [[ : $interfaceName* ]]
 {
-    [[ << signature >> + ]]
+    [[ $signature+ ]]
 }
 
-className := << symbol >> | << symbol >> < << symbol >>  * > 
+className := $symbol | $symbol < $symbol* > 
 interfaceName := className
 
-signature := << symbol >> : << type >> ;
+signature := $symbol : $type;
 
-type := << symbol >> | << type >> -> << type >> | ( << type >> )
+type := $symbol | $type -> $type | ( $type )
 
 constructorDef :=
 
-[[ [ mode << symbol >> ] ]]
-[[ public ]] cons : << type >>  ( << symbol >> * )
+[[ [ mode $symbol ] ]]
+[[ public ]] cons : $type ( $symbol* )
 {
-    << statement >> *
+    $statement*
 }
 
 methodDef := 
 
-[[ public ]] << symbol >> [[ < << symbol >>  * >  ]] : 
+[[ public ]] $symbol [[ < $symbol* >  ]] : 
 
 namespaceDef := 
 
-namespace << symbol >> [[ . << symbolList >> ]] 
+namespace $symbol [[ . $symbolList ]] 
 {
-    << interfaceDef >> *
-    << classDef >> *
-    << methodDef >> *
+    $interfaceDef*
+    $classDef*
+    $methodDef*
 }
 
 
