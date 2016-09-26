@@ -5,27 +5,29 @@ $blah - meta variable
 classDef := 
 
 [[ [mode $symbol*]  ]]
-[[ public ]] class $className [[ : $interfaceName* ]]
+[[ public ]] class $symbol : $type  [[ - $symbol* ]]
 {
     # order shouldn't matter for these
     [[ $fieldDef* ]]
     [[ $methodDef* ]]
     [[ $constructorDef* ]]
+    [[ $classDef ]]
 }
 
 interfaceDef :=
 
-[[ public ]] interface $interfaceName [[ : $interfaceName* ]]
+[[ public ]] interface $symbol : $type [[ - $symbol* ]]
 {
     [[ $signature+ ]]
 }
 
-className := $symbol | $symbol < $symbol* > 
-interfaceName := className
+signature := $symbol : $type ;
 
-signature := $symbol : $type;
-
-type := $symbol | $type -> $type | ( $type )
+type := $symbol 
+      | '$symbol
+      | $type -> $type 
+      | ( $type )
+      | [[ ('$symbol : $symbol* )* =>) $type 
 
 constructorDef :=
 
@@ -33,13 +35,20 @@ constructorDef :=
 [[ public ]] cons : $type ( $symbol* )
 {
     $statement*
+    $classDef*
 }
 
 methodDef := 
 
-[[ public ]] $symbol [[ < $symbol* >  ]] : 
+[[ public ]] $symbol [[ < $symbol* >  ]] : $type
+{
+    $statement*
+    $classDef*
+}
 
 namespaceDef := 
+
+using $symbol; *
 
 namespace $symbol [[ . $symbolList ]] 
 {
@@ -47,5 +56,43 @@ namespace $symbol [[ . $symbolList ]]
     $classDef*
     $methodDef*
 }
+
+lambda :=
+
+foreach :=
+
+while :=
+
+do :=
+
+field/methodIndex :=
+
+constructorCall :=
+
+functionCall :=
+
+match :=
+
+constantDef :=
+
+varDef :=
+
+return :=
+
+new :=
+
+assignment :=
+
+number :=
+
+string := "whatever"
+        | [[ whatever ]]
+
+comment := -- whatever
+         | --[=*[ whatever  --]=*]
+
+binaryExpr :=
+
+ifStatement :=
 
 
