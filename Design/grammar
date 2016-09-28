@@ -23,24 +23,30 @@ interfaceDef :=
 
 signature := $symbol : $type ;
 
+#need a concrete type
 type := $symbol 
       | '$symbol
       | $type -> $type 
       | ( $type )
       | [[ ('$symbol : $symbol* )* =>) $type 
+      | $symbol<$type>
+      |'$symbol<$type>
+
+classType := $symbol 
+          | $symbol<$type>
 
 constructorDef :=
 
 [[ [ mode $symbol ] ]]
 [[ public ]] cons : $type ( $symbol* )
 {
-    $statement*
+    $statement ; *
     $classDef*
 }
 
 methodDef := 
 
-[[ public ]] $symbol [[ < $symbol* >  ]] : $type
+[[ public ]] $symbol : $type
 {
     $statement*
     $classDef*
@@ -57,42 +63,80 @@ namespace $symbol [[ . $symbolList ]]
     $methodDef*
 }
 
-lambda :=
+lambda :=  ( $symbol * ) -> { *statements ; }
+       | $symbol -> $expr 
 
 foreach :=
 
+# think this needs to be a non ' type
+foreach var $symbol [[ : $type ]]  in $expr
+{
+    $statement ; *
+}
+
 while :=
+
+while $expr
+{
+    $statement ; *
+}
 
 do :=
 
-field/methodIndex :=
+do ( $expr, $expr )
+{
+    $doExpr ; * 
+}
 
-constructorCall :=
+doExpr := $symbol <- $expr
+       | $expr
+       | unit $expr
 
-functionCall :=
+field/methodIndex := $expr . $symbol [[ <$type> ]] ( $expr * )
+
+constructorCall := new $classType ( $expr* )
+
+# probably needs to be a non ' type
+functionCall := $expr ( $expr * )
+             | $expr < $type > ( $expr * )
 
 match :=
 
-constantDef :=
+match $expr
+{
+    $matchExpr
+}
 
-varDef :=
+# matchee keyword?
+matchExpr := $symbol => $expr ;
 
-return :=
+constantDef := const $symbol [[ : $type ]] = $expr
 
-new :=
+varDef := var $symbol [[ : $type ]] = $expr
 
-assignment :=
+return := return $expr
 
-number :=
+assignment := $symbol = $expr
+
+boolean := true | false
+
+number := 0 - 9 + [[ . 0 - 9 * ]]
 
 string := "whatever"
-        | [[ whatever ]]
+        | [=*[ whatever ]=*]
 
 comment := -- whatever
          | --[=*[ whatever  --]=*]
 
-binaryExpr :=
+binaryExpr := 
 
 ifStatement :=
+
+if $expr
+{
+} 
+[[ else
+{
+} ]]
 
 
