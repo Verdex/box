@@ -3,7 +3,7 @@ using System;
 using System.Linq;
 using System.Collections.Generic;
 
-namespace Box 
+namespace Box.Parsing 
 {
     public struct Empty
     {
