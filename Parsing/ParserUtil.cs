@@ -183,5 +183,22 @@ namespace Box.Parsing
                 return new ParseResult<char>( new FailData( buffer.Index ) ); 
             }
         };
+
+        public static Parser<string> Match( string value ) 
+        {
+            return buffer =>
+            {
+                if ( value.Length + buffer.Index <= buffer.Text.Length + 1 )
+                {
+                    var target = buffer.Text.Substring( buffer.Index, value.Length );
+                    if ( target == value )
+                    {
+                        buffer.Index += value.Length;
+                        return new ParseResult<string>( value, buffer );
+                    }
+                }
+                return new ParseResult<string>( new FailData( buffer.Index ) );
+            };
+        }
     }
 }
