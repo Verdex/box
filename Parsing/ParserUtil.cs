@@ -23,7 +23,12 @@ namespace Box.Parsing
 
     public class FailData
     {
-        
+        public readonly int FailIndex;
+
+        public FailData( int index )
+        {
+            FailIndex = index;
+        }
     }
 
     public class ParseResult<T>
@@ -61,7 +66,7 @@ namespace Box.Parsing
                 }
                 else
                 {
-                    return new ParseResult<B>( null ); // TODO put some fail data in here
+                    return new ParseResult<B>( new FailData( buffer.Index ) );
                 }
             };
         }
@@ -79,7 +84,7 @@ namespace Box.Parsing
             }
             else
             {
-                return new ParseResult<Empty>( null ); // TODO fail data
+                return new ParseResult<Empty>( new FailData( buffer.Index ) ); 
             }
         };
 
@@ -94,7 +99,7 @@ namespace Box.Parsing
                 }
                 else
                 {
-                    return new ParseResult<B>( null ); // TODO fail data
+                    return new ParseResult<B>( new FailData( buffer.Index ) ); 
                 }
             };
         }
@@ -161,7 +166,7 @@ namespace Box.Parsing
                         return new ParseResult<A>( result.Result, result.Buffer );
                     }
                 }
-                return new ParseResult<A>( null ); // TODO fail data
+                return new ParseResult<A>( new FailData( buffer.Index ) ); 
             };
         }
 
@@ -175,7 +180,7 @@ namespace Box.Parsing
             }
             else
             {
-                return new ParseResult<char>( null ); // TODO fail data
+                return new ParseResult<char>( new FailData( buffer.Index ) ); 
             }
         };
     }
