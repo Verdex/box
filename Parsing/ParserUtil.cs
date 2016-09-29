@@ -71,6 +71,22 @@ namespace Box.Parsing
             };
         }
 
+        public static Parser<B> Bind<A, B>( Parser<A> parser, Func<Parser<B>> gen )
+        {
+            return buffer => 
+            {
+                var result = parser( buffer );
+                if ( result.IsSuccessful )
+                {
+                    return gen()( result.Buffer );
+                }
+                else
+                {
+                    return new ParseResult<B>( new FailData( buffer.Index ) );
+                }
+            };
+        }
+
         public static Parser<A> Unit<A>( A value )
         {
             return buffer => new ParseResult<A>( value, buffer );
@@ -188,7 +204,7 @@ namespace Box.Parsing
         {
             return buffer =>
             {
-                if ( value.Length + buffer.Index <= buffer.Text.Length + 1 )
+                if ( value.Length + buffer.Index <= buffer.Text.Length )
                 {
                     var target = buffer.Text.Substring( buffer.Index, value.Length );
                     if ( target == value )
