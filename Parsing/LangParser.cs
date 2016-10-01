@@ -50,7 +50,7 @@ namespace Box.Parsing
             ParserUtil.Unit( new Number( whole, exponent, deci ) ) ) ) ) ) );
 
         // TODO make this work with negative numbers (also negative exponents)
-        // TODO make this work with fractional exponents
+        // TODO make this work with fractional exponents (not sure how much I care about this one though)
         public static Parser<Number> Number =
             ParserUtil.Alternate(
                 // The order here matters.  If we start with WholeNumber, then
