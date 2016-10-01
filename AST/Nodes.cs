@@ -1,4 +1,6 @@
 
+using Box;
+
 namespace Box.AST
 {
     public class Boolean
@@ -15,7 +17,7 @@ namespace Box.AST
     {
         public Number()
         {
-            
+        
         }
     }
 }

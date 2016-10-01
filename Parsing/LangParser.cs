@@ -23,12 +23,21 @@ namespace Box.Parsing
                 ParserUtil.Match( "7" ),
                 ParserUtil.Match( "8" ),
                 ParserUtil.Match( "9" ) )
-            .Map( value => int.Parse( value ) );
+            .Map( value => int.Parse( value ) ); 
 
-        //public static Parser<?> Decimal = 
+        public static ParseResult<T> Number<Number>( ParseBuffer buffer )
+        {
+            var deci = ParserUtil.Bind( ParserUtil.Match( "." ), () =>
+                       ParserUtil.Bind( Digit.OneOrMore(),       digits => 
+                       ParserUtil.Unit( int.Parse( digits ) ) ) );
 
-        /*public static Parser<Number> Number =
+            ParserUtil.Bind( Digit.OneOrMore(), wholeDigits =>
+            ParserUtil.Bind( ParserUtil.Match( "." ), () => 
+            ParserUtil.Bind())
+        }
+        public static Parser<Number> Number =
             ParserUtil.Bind( Digit.OneOrMore(), wholeDigits => 
-            */
+            ParserUtil.Bind( ParserUtil.Match( "." )
+            
     }
 }
