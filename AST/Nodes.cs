@@ -10,4 +10,12 @@ namespace Box.AST
             Value = value;
         }
     }
+
+    public class Number
+    {
+        public Number()
+        {
+            
+        }
+    }
 }
