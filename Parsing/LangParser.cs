@@ -28,17 +28,25 @@ namespace Box.Parsing
             .Map( value => value.Aggregate( "", (a, b) => a + b  ) )
             .Map( value => int.Parse( value ) );
 
+        private static Parser<bool> Negative =
+            ParserUtil.Match( "-" )
+            .OneOrNone()
+            .Map( value => value.HasValue );
+
         private static Parser<Number> WholeNumber =
-            Digits
-            .Map( value => new Number( value, 0, 0 ) );
+            ParserUtil.Bind( Negative, neg => 
+            ParserUtil.Bind( Digits, digits =>
+            ParserUtil.Unit( new Number( digits, neg, 0, false, 0 ) ) ) );
 
         private static Parser<Number> DecimalNumber = 
+            ParserUtil.Bind( Negative, neg => 
             ParserUtil.Bind( Digits, whole =>
             ParserUtil.Bind( ParserUtil.Match( "." ), () =>
             ParserUtil.Bind( Digits, deci => 
-            ParserUtil.Unit( new Number( whole, 0, deci ) ) ) ) );
+            ParserUtil.Unit( new Number( whole, false, 0, false, deci ) ) ) ) ) );
 
         private static Parser<Number> ExponentNumber =
+            ParserUtil.Bind( Negative, negWhole => 
             ParserUtil.Bind( Digits, whole =>
             ParserUtil.Bind( ParserUtil.Match( "." ), () =>
             ParserUtil.Bind( Digits, deci => 
@@ -46,11 +54,11 @@ namespace Box.Parsing
                 ParserUtil.Alternate( 
                     ParserUtil.Match( "E" ),
                     ParserUtil.Match( "e" ) ), () =>
+            ParserUtil.Bind( Negative, negExp =>
             ParserUtil.Bind( Digits, exponent => 
-            ParserUtil.Unit( new Number( whole, exponent, deci ) ) ) ) ) ) );
+            ParserUtil.Unit( new Number( whole, negWhole, exponent, negExp, deci ) ) ) ) ) ) ) ) );
 
-        // TODO make this work with negative numbers (also negative exponents)
-        // TODO make this work with fractional exponents (not sure how much I care about this one though)
+        // TODO One Or None isn't working.  Need to fix that to get negatives
         public static Parser<Number> Number =
             ParserUtil.Alternate(
                 // The order here matters.  If we start with WholeNumber, then
