@@ -15,9 +15,15 @@ namespace Box.AST
 
     public class Number
     {
-        public Number()
+        public readonly int WholeNumber;
+        public readonly int Exponent;
+        public readonly int Decimal;
+
+        public Number(int whole, int exponent, int deci)
         {
-        
+            WholeNumber = whole;
+            Exponent = exponent;
+            Decimal = deci;
         }
     }
 }
