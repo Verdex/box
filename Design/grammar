@@ -135,6 +135,9 @@ ifStatement :=
 if $expr
 {
 } 
+[[ else if $expr
+{
+} ]]
 [[ else
 {
 } ]]
