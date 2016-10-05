@@ -43,7 +43,7 @@ namespace Box.Parsing
             ParserUtil.Bind( Digits, whole =>
             ParserUtil.Bind( ParserUtil.Match( "." ), () =>
             ParserUtil.Bind( Digits, deci => 
-            ParserUtil.Unit( new Number( whole, false, 0, false, deci ) ) ) ) ) );
+            ParserUtil.Unit( new Number( whole, neg, 0, false, deci ) ) ) ) ) );
 
         private static Parser<Number> ExponentNumber =
             ParserUtil.Bind( Negative, negWhole => 
@@ -57,8 +57,7 @@ namespace Box.Parsing
             ParserUtil.Bind( Negative, negExp =>
             ParserUtil.Bind( Digits, exponent => 
             ParserUtil.Unit( new Number( whole, negWhole, exponent, negExp, deci ) ) ) ) ) ) ) ) );
-
-        // TODO One Or None isn't working.  Need to fix that to get negatives
+            
         public static Parser<Number> Number =
             ParserUtil.Alternate(
                 // The order here matters.  If we start with WholeNumber, then

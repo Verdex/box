@@ -29,7 +29,9 @@ namespace Box.AST
             int deci)
         {
             WholeNumber = whole;
+            NegativeWhole = negWhole;
             Exponent = exponent;
+            NegativeExponent = negExp;
             Decimal = deci;
         }
     }
