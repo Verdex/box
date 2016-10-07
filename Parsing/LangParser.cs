@@ -65,5 +65,19 @@ namespace Box.Parsing
                 ExponentNumber,
                 DecimalNumber,
                 WholeNumber );
+
+                // TODO
+        private static Parser<NString> SingleLineString = 
+            ParserUtil.Bind( ParserUtil.Match( "\"" ), () =>
+            ParserUtil.Bind( ParserUtil.EatChar.ZeroOrMore(), chars => // need to avoid parsing "
+            ParserUtil.Bind( ParserUtil.Match( "\"" ) () =>
+            ParserUtil.Unit( chars /* need to turn this into a string */ ) ) ) );
+
+        private static Parser<NString> MultiLineString = null;
+
+        private static Parser<NString> NString = 
+            ParserUtil.Alternate(
+                SingleLineString,
+                MultiLineString );
     }
 }

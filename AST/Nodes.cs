@@ -35,4 +35,14 @@ namespace Box.AST
             Decimal = deci;
         }
     }
+
+    public class NString
+    {
+        public readonly string Value;
+
+        public NString(string value)
+        {
+            Value = value;
+        }
+    }
 }
