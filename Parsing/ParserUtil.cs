@@ -186,6 +186,31 @@ namespace Box.Parsing
             };
         }
 
+        public static Parser<string> ParseUntil( Parser<Empty> end )
+        {
+            return buffer =>
+            {
+                var length = 0;
+                var start = buffer.Index;
+                var res = end( buffer );
+                while ( !res.IsSuccessful && start + length < buffer.Text.Length )
+                {
+                    length++;
+                    buffer.Index++;
+                    res = end( buffer );
+                }
+                if ( res.IsSuccessful )
+                {
+                    var s = res.Buffer.Index - length - 1;
+                    return new ParseResult<string>( buffer.Text.Substring( s, length ), res.Buffer );
+                }
+                else
+                {
+                    return new ParseResult<string>( new FailData( buffer.Index ) );
+                }
+            };
+        }
+
         public static Parser<char> EatChar = buffer => 
         {
             if ( buffer.Index < buffer.Text.Length )
