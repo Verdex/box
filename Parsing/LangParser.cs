@@ -66,23 +66,23 @@ namespace Box.Parsing
                 DecimalNumber,
                 WholeNumber );
 
-        private static Parser<NString> SingleLineString = 
+        private static Parser<NString> NormalString = 
             ParserUtil.Bind( ParserUtil.Match( "\"" ), () =>
             ParserUtil.Bind( ParserUtil.ParseUntil( ParserUtil.Match( "\"" ).Map( v => new Empty() ) ), str => 
             ParserUtil.Unit( new NString( str ) ) ) );
 
-        public static Parser<NString> MultiLineString = 
+        private static Parser<NString> RawString = 
             ParserUtil.Bind( ParserUtil.Match( "[" ), () => 
             ParserUtil.Bind( ParserUtil.Match( "=" )
                                 .ZeroOrMore()
-                                .Map( value => value.Aggregate( "", (a, b) => a + b  ) ), equals =>
+                                .Map( value => value.Aggregate( "", (a, b) => a + b  ) ), equals => 
             ParserUtil.Bind( ParserUtil.Match( "[" ), () => 
             ParserUtil.Bind( ParserUtil.ParseUntil( ParserUtil.Match( "]" + equals + "]" ).Map( v => new Empty() ) ), str => 
             ParserUtil.Unit( new NString( str ) ) ) ) ) );
 
-        /*private static Parser<NString> NString = 
+        public static Parser<NString> NString = 
             ParserUtil.Alternate(
-                SingleLineString,
-                MultiLineString );*/
+                NormalString,
+                RawString );
     }
 }
