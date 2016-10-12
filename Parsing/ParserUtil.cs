@@ -152,12 +152,9 @@ namespace Box.Parsing
                 ParseBuffer? temp = null;
                 while ( result.IsSuccessful )
                 {
+                    temp = result.Buffer;
                     a.Add( result.Result );
                     result = parser( result.Buffer );
-                    if ( result.IsSuccessful )
-                    {
-                        temp = result.Buffer;
-                    }
                 }
                 if ( temp.HasValue )
                 {
