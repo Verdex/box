@@ -201,8 +201,7 @@ namespace Box.Parsing
                 }
                 if ( res.IsSuccessful )
                 {
-                    var s = res.Buffer.Index - length - 1;
-                    return new ParseResult<string>( buffer.Text.Substring( s, length ), res.Buffer );
+                    return new ParseResult<string>( buffer.Text.Substring( start, length ), res.Buffer );
                 }
                 else
                 {
