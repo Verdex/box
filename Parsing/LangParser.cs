@@ -84,5 +84,15 @@ namespace Box.Parsing
             ParserUtil.Alternate(
                 NormalString,
                 RawString );
+
+        // TODO test; single line comment probably needs to occur before block comment to allow neat lua block comment on off thingy (ie ---[[ turns off block comment)
+        public static Parser<Empty> BlockComment = 
+            ParserUtil.Bind( ParserUtil.Match( "--[" ), () => 
+            ParserUtil.Bind( ParserUtil.Match( "=" )
+                                .ZeroOrMore()
+                                .Map( value => value.Aggregate( "", (a, b) => a + b  ) ), equals => 
+            ParserUtil.Bind( ParserUtil.Match( "--[" ), () => 
+            ParserUtil.Bind( ParserUtil.ParseUntil( ParserUtil.Match( "]" + equals + "]" ).Map( v => new Empty() ) ), () => 
+            ParserUtil.Unit( new Empty() ) ) ) ) );
     }
 }
