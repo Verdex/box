@@ -183,7 +183,7 @@ namespace Box.Parsing
             };
         }
 
-        public static Parser<string> ParseUntil( Parser<Empty> end )
+        public static Parser<string> ParseUntil<Ignore>( Parser<Ignore> end )
         {
             return buffer =>
             {

@@ -6,6 +6,12 @@ namespace Box.Parsing
 {
     public static class LangParser
     {
+        public static Parser<Empty> EndLine = 
+            ParserUtil.Alternate(
+                ParserUtil.Match( "\r\n" ),
+                ParserUtil.Match( "\n" ),
+                ParserUtil.Match( "\r" ) ).Map( v => new Empty() );
+
         public static Parser<Boolean> Boolean = 
             ParserUtil.Alternate( 
                 ParserUtil.Match( "true" ), 
@@ -68,7 +74,7 @@ namespace Box.Parsing
 
         private static Parser<NString> NormalString = 
             ParserUtil.Bind( ParserUtil.Match( "\"" ), () =>
-            ParserUtil.Bind( ParserUtil.ParseUntil( ParserUtil.Match( "\"" ).Map( v => new Empty() ) ), str => 
+            ParserUtil.Bind( ParserUtil.ParseUntil( ParserUtil.Match( "\"" ) ), str => 
             ParserUtil.Unit( new NString( str ) ) ) );
 
         private static Parser<NString> RawString = 
@@ -77,7 +83,7 @@ namespace Box.Parsing
                                 .ZeroOrMore()
                                 .Map( value => value.Aggregate( "", (a, b) => a + b  ) ), equals => 
             ParserUtil.Bind( ParserUtil.Match( "[" ), () => 
-            ParserUtil.Bind( ParserUtil.ParseUntil( ParserUtil.Match( "]" + equals + "]" ).Map( v => new Empty() ) ), str => 
+            ParserUtil.Bind( ParserUtil.ParseUntil( ParserUtil.Match( "]" + equals + "]" ) ), str => 
             ParserUtil.Unit( new NString( str ) ) ) ) ) );
 
         public static Parser<NString> NString = 
@@ -85,14 +91,25 @@ namespace Box.Parsing
                 NormalString,
                 RawString );
 
-        // TODO test; single line comment probably needs to occur before block comment to allow neat lua block comment on off thingy (ie ---[[ turns off block comment)
-        public static Parser<Empty> BlockComment = 
+        private static Parser<Empty> LineComment =
+            ParserUtil.Bind( ParserUtil.Match( "--" ), () =>
+            ParserUtil.Bind( ParserUtil.ParseUntil( ParserUtil.Alternate( EndLine, ParserUtil.End ) ), () =>
+            ParserUtil.Unit( new Empty() ) ) );
+
+        private static Parser<Empty> BlockComment = 
             ParserUtil.Bind( ParserUtil.Match( "--[" ), () => 
             ParserUtil.Bind( ParserUtil.Match( "=" )
                                 .ZeroOrMore()
                                 .Map( value => value.Aggregate( "", (a, b) => a + b  ) ), equals => 
-            ParserUtil.Bind( ParserUtil.Match( "--[" ), () => 
-            ParserUtil.Bind( ParserUtil.ParseUntil( ParserUtil.Match( "]" + equals + "]" ).Map( v => new Empty() ) ), () => 
+            ParserUtil.Bind( ParserUtil.Match( "[" ), () => 
+            ParserUtil.Bind( ParserUtil.ParseUntil( ParserUtil.Match( "--]" + equals + "]" ) ), () => 
             ParserUtil.Unit( new Empty() ) ) ) ) );
+
+        public static Parser<Empty> Comment = 
+            ParserUtil.Alternate(
+                // TODO test the toggle block sometime
+                // Line Comment needs to happen first in order to pull off the toggle block trick
+                LineComment,
+                BlockComment );
     }
 }
