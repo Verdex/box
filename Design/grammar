@@ -116,6 +116,8 @@ varDef := var $symbol [[ : $type ]] = $expr
 
 return := return $expr
 
+yield := yield return | yield break
+
 assignment := $symbol = $expr
 
 boolean := true | false
