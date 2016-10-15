@@ -23,6 +23,9 @@ interfaceDef :=
 
 signature := $symbol : $type ;
 
+genericType :=
+    
+
 #need a concrete type
 type := $symbol 
       | '$symbol
@@ -94,7 +97,8 @@ doExpr := $symbol <- $expr
 
 field/methodIndex := $expr . $symbol [[ <$type> ]] ( $expr * )
 
-constructorCall := new $classType ( $expr* )
+constructorCall := new $classType ( $expr* ) [[ [mode $symbol] ]]
+
 
 # probably needs to be a non ' type
 functionCall := $expr ( $expr * )
