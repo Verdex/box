@@ -111,5 +111,17 @@ namespace Box.Parsing
                 // Line Comment needs to happen first in order to pull off the toggle block trick
                 LineComment,
                 BlockComment );
+
+        private static Parser<Expr> Cast<T>( Parser<T> p )
+            where T : Expr 
+        {
+            return p.Map( v => v as Expr );
+        }
+
+        public static Parser<Expr> Expr =
+            ParserUtil.Alternate( 
+                Cast( Boolean ),
+                Cast( Number ),
+                Cast( NString ) );
     }
 }

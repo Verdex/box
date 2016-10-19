@@ -3,7 +3,7 @@ using Box;
 
 namespace Box.AST
 {
-    public class Boolean
+    public class Boolean : Expr
     {
         public readonly bool Value;
 
@@ -13,7 +13,7 @@ namespace Box.AST
         }
     }
 
-    public class Number
+    public class Number : Expr
     {
         public readonly bool NegativeWhole;
         public readonly int WholeNumber;
@@ -36,7 +36,7 @@ namespace Box.AST
         }
     }
 
-    public class NString
+    public class NString : Expr
     {
         public readonly string Value;
 
@@ -45,4 +45,7 @@ namespace Box.AST
             Value = value;
         }
     }
+
+    // :(
+    public interface Expr { }
 }
