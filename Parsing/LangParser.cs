@@ -11,6 +11,8 @@ namespace Box.Parsing
             return ParserUtil.Match( value );
         }
 
+        // TODO make shortcuts like Lit for bind, unit, whitespace 
+
         public static Parser<Empty> EndLine = 
             ParserUtil.Alternate(
                 Lit( "\r\n" ),
