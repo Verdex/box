@@ -118,11 +118,18 @@ namespace Box.Parsing
             return p.Map( v => v as Expr );
         }
 
+        public static Parser<Empty> Semi =
+            ParserUtil.Bind( ParserUtil.Whitespace, () =>
+            ParserUtil.Bind( ParserUtil.Match( ";" ), () => 
+            ParserUtil.Bind( ParserUtil.Whitespace, () =>
+            ParserUtil.Unit( new Empty() ) ) ) );
+
         public static Parser<Return> Return =
             ParserUtil.Bind( ParserUtil.Match( "return" ), () =>
             ParserUtil.Bind( ParserUtil.Whitespace, () => 
             ParserUtil.Bind( Expr, expr =>
-            ParserUtil.Unit( new Return( expr ) ) ) ) ); 
+            ParserUtil.Bind( Semi, () =>
+            ParserUtil.Unit( new Return( expr ) ) ) ) ) ); 
 
         public static Parser<Expr> Expr =
             ParserUtil.Alternate( 
