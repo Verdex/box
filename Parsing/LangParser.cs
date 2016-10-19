@@ -112,18 +112,14 @@ namespace Box.Parsing
                 LineComment,
                 BlockComment );
 
-        private static Parser<Expr> Cast<T>( Parser<T> p )
-            where T : Expr 
-        {
-            return p.Map( v => v as Expr );
-        }
-
+            // TODO test
         public static Parser<Empty> Semi =
             ParserUtil.Bind( ParserUtil.Whitespace, () =>
             ParserUtil.Bind( ParserUtil.Match( ";" ), () => 
             ParserUtil.Bind( ParserUtil.Whitespace, () =>
             ParserUtil.Unit( new Empty() ) ) ) );
 
+            // TODO test
         public static Parser<Return> Return =
             ParserUtil.Bind( ParserUtil.Match( "return" ), () =>
             ParserUtil.Bind( ParserUtil.Whitespace, () => 
@@ -131,6 +127,13 @@ namespace Box.Parsing
             ParserUtil.Bind( Semi, () =>
             ParserUtil.Unit( new Return( expr ) ) ) ) ) ); 
 
+        private static Parser<Expr> Cast<T>( Parser<T> p )
+            where T : Expr 
+        {
+            return p.Map( v => v as Expr );
+        }
+
+             // TODO test when finished
         public static Parser<Expr> Expr =
             ParserUtil.Alternate( 
                 Cast( Boolean ),
