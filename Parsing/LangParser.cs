@@ -127,6 +127,16 @@ namespace Box.Parsing
             ParserUtil.Bind( Semi, () =>
             ParserUtil.Unit( new Return( expr ) ) ) ) ) ); 
 
+        public static Parser<Expr> ParenExpr = 
+            ParserUtil.Bind( ParserUtil.Whitespace, () =>
+            ParserUtil.Bind( ParserUtil.Match( "(" ), () =>
+            ParserUtil.Bind( ParserUtil.Whitespace, () => 
+            ParserUtil.Bind( Expr, e => 
+            ParserUtil.Bind( ParserUtil.Whitespace, () => 
+            ParserUtil.Bind( ParserUtil.Match( ")" ), () =>
+            ParserUtil.Bind( ParserUtil.Whitespace, () => 
+            ParserUtil.Unit( e ) ) ) ) ) ) ) );
+
         private static Parser<Expr> Cast<T>( Parser<T> p )
             where T : Expr 
         {
