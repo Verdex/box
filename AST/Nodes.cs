@@ -46,6 +46,17 @@ namespace Box.AST
         }
     }
 
+    public class Return : Statement
+    {
+        public readonly Expr Expression;
+        
+        public Return( Expr e )
+        {
+            Expression = e;
+        }
+    }
+
     // :(
     public interface Expr { }
+    public interface Statement { }
 }

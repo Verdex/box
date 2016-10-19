@@ -207,6 +207,12 @@ namespace Box.Parsing
             };
         }
 
+        public static Parser<Empty> Whitespace = buffer =>
+        {
+          // TODO implement
+            return new ParseResult<Empty>( null );  
+        };
+
         public static Parser<char> EatChar = buffer => 
         {
             if ( buffer.Index < buffer.Text.Length )
