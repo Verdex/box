@@ -79,6 +79,7 @@ foreach var $symbol [[ : $type ]]  in $expr
 
 while :=
 
+#should probably have break and continue for loops
 while $expr
 {
     $statement ; *
