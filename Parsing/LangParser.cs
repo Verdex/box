@@ -7,6 +7,10 @@ namespace Box.Parsing
 {
     public static class LangParser
     {
+        // NOTE:  Referencing a field in the definition of a field will yield null.
+        // For recursive definitions use properties.  Also make sure fields that
+        // are defined in terms of other fields occur last.
+
         private static Parser<string> Lit( string value )
         {
             return ParserUtil.Match( value );
@@ -33,6 +37,7 @@ namespace Box.Parsing
                 Lit( "\n" ),
                 Lit( "\r" ) ).Map( v => new Empty() );
 
+                // TODO probably need end of file in here too
         public static Parser<Empty> Ws =
             ParserUtil.Alternate(
                 EndLine,
@@ -141,20 +146,19 @@ namespace Box.Parsing
                 LineComment,
                 BlockComment );
 
-            // TODO test
         public static Parser<Empty> Semi =
             Bind( Ws, () =>
             Bind( Lit( ";" ), () => 
             Bind( Ws, () =>
             Unit( new Empty() ) ) ) );
 
-            // TODO test
         public static Parser<Return> Return =
+            Bind( Ws, () => 
             Bind( Lit( "return" ), () =>
             Bind( Ws, () => 
             Bind( Expr, expr =>
             Bind( Semi, () =>
-            Unit( new Return( expr ) ) ) ) ) ); 
+            Unit( new Return( expr ) ) ) ) ) ) ); 
 
         public static Parser<Expr> ParenExpr = 
             Bind( Ws, () =>
@@ -177,11 +181,16 @@ namespace Box.Parsing
             return p.Map( v => new Empty() );
         }
              // TODO test when finished
-        public static Parser<Expr> Expr =
-            ParserUtil.Alternate( 
-                CastExpr( Boolean ),
-                CastExpr( Number ),
-                CastExpr( NString ),
-                ParenExpr );
+        public static Parser<Expr> Expr
+        {
+            get
+            {
+                return ParserUtil.Alternate( 
+                            CastExpr( Boolean ),
+                            CastExpr( Number ),
+                            CastExpr( NString ),
+                            ParenExpr );
+            }
+        }
     }
 }
