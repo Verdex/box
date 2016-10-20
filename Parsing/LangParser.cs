@@ -27,27 +27,27 @@ namespace Box.Parsing
             return ParserUtil.Unit( value );
         } 
 
-        private static Parser<Empty> Ws = 
-            ParserUtil.Alternate(
-                EndLine,
-                Lit( " " ),
-                Lit( "\t" ),
-                Lit( "\f" ),
-                Lit( "\v" ) );
-
-        public static Parser<Empty> EndLine = 
+        public static Parser<Empty> EndLine =
             ParserUtil.Alternate(
                 Lit( "\r\n" ),
                 Lit( "\n" ),
                 Lit( "\r" ) ).Map( v => new Empty() );
 
-        public static Parser<NBoolean> Boolean = 
+        public static Parser<Empty> Ws =
+            ParserUtil.Alternate(
+                EndLine,
+                CastEmpty( Lit( " " ) ),
+                CastEmpty( Lit( "\t" ) ),
+                CastEmpty( Lit( "\f" ) ),
+                CastEmpty( Lit( "\v" ) ) ).ZeroOrMore().Map( v => new Empty() );
+
+        public static Parser<NBoolean> Boolean =
             ParserUtil.Alternate( 
                 Lit( "true" ), 
                 Lit( "false" ) )
             .Map( value => new NBoolean( value == "true" ) );
 
-        private static Parser<int> Digits =
+        private static Parser<int> Digits = 
             ParserUtil.Alternate(
                 Lit( "0" ),
                 Lit( "1" ),
@@ -166,18 +166,22 @@ namespace Box.Parsing
             Bind( Ws, () => 
             Unit( e ) ) ) ) ) ) ) );
 
-        private static Parser<Expr> Cast<T>( Parser<T> p )
+        private static Parser<Expr> CastExpr<T>( Parser<T> p )
             where T : Expr 
         {
             return p.Map( v => v as Expr );
         }
 
+        private static Parser<Empty> CastEmpty<T>( Parser<T> p )
+        {
+            return p.Map( v => new Empty() );
+        }
              // TODO test when finished
         public static Parser<Expr> Expr =
             ParserUtil.Alternate( 
-                Cast( Boolean ),
-                Cast( Number ),
-                Cast( NString ),
+                CastExpr( Boolean ),
+                CastExpr( Number ),
+                CastExpr( NString ),
                 ParenExpr );
     }
 }
