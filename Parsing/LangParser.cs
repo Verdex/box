@@ -1,4 +1,5 @@
 
+using System;
 using System.Linq;
 using Box.AST;
 
@@ -11,7 +12,28 @@ namespace Box.Parsing
             return ParserUtil.Match( value );
         }
 
-        // TODO make shortcuts like Lit for bind, unit, whitespace 
+        private static Parser<B> Bind<A, B>( Parser<A> parser, Func<A, Parser<B>> gen )
+        {
+            return ParserUtil.Bind( parser, gen );
+        }
+
+        private static Parser<B> Bind<A, B>( Parser<A> parser, Func<Parser<B>> gen )
+        {
+            return ParserUtil.Bind( parser, gen );
+        }
+
+        private static Parser<A> Unit<A>( A value )
+        {
+            return ParserUtil.Unit( value );
+        } 
+
+        private static Parser<Empty> Ws = 
+            ParserUtil.Alternate(
+                EndLine,
+                Lit( " " ),
+                Lit( "\t" ),
+                Lit( "\f" ),
+                Lit( "\v" ) );
 
         public static Parser<Empty> EndLine = 
             ParserUtil.Alternate(
@@ -19,11 +41,11 @@ namespace Box.Parsing
                 Lit( "\n" ),
                 Lit( "\r" ) ).Map( v => new Empty() );
 
-        public static Parser<Boolean> Boolean = 
+        public static Parser<NBoolean> Boolean = 
             ParserUtil.Alternate( 
                 Lit( "true" ), 
                 Lit( "false" ) )
-            .Map( value => new Boolean( value == "true" ) );
+            .Map( value => new NBoolean( value == "true" ) );
 
         private static Parser<int> Digits =
             ParserUtil.Alternate(
@@ -47,29 +69,29 @@ namespace Box.Parsing
             .Map( value => value.HasValue );
 
         private static Parser<Number> WholeNumber =
-            ParserUtil.Bind( Negative, neg => 
-            ParserUtil.Bind( Digits, digits =>
-            ParserUtil.Unit( new Number( digits, neg, 0, false, 0 ) ) ) );
+            Bind( Negative, neg => 
+            Bind( Digits, digits =>
+            Unit( new Number( digits, neg, 0, false, 0 ) ) ) );
 
         private static Parser<Number> DecimalNumber = 
-            ParserUtil.Bind( Negative, neg => 
-            ParserUtil.Bind( Digits, whole =>
-            ParserUtil.Bind( Lit( "." ), () =>
-            ParserUtil.Bind( Digits, deci => 
-            ParserUtil.Unit( new Number( whole, neg, 0, false, deci ) ) ) ) ) );
+            Bind( Negative, neg => 
+            Bind( Digits, whole =>
+            Bind( Lit( "." ), () =>
+            Bind( Digits, deci => 
+            Unit( new Number( whole, neg, 0, false, deci ) ) ) ) ) );
 
         private static Parser<Number> ExponentNumber =
-            ParserUtil.Bind( Negative, negWhole => 
-            ParserUtil.Bind( Digits, whole =>
-            ParserUtil.Bind( Lit( "." ), () =>
-            ParserUtil.Bind( Digits, deci => 
-            ParserUtil.Bind( 
+            Bind( Negative, negWhole => 
+            Bind( Digits, whole =>
+            Bind( Lit( "." ), () =>
+            Bind( Digits, deci => 
+            Bind( 
                 ParserUtil.Alternate( 
                     Lit( "E" ),
                     Lit( "e" ) ), () =>
-            ParserUtil.Bind( Negative, negExp =>
-            ParserUtil.Bind( Digits, exponent => 
-            ParserUtil.Unit( new Number( whole, negWhole, exponent, negExp, deci ) ) ) ) ) ) ) ) );
+            Bind( Negative, negExp =>
+            Bind( Digits, exponent => 
+            Unit( new Number( whole, negWhole, exponent, negExp, deci ) ) ) ) ) ) ) ) );
             
         public static Parser<Number> Number =
             ParserUtil.Alternate(
@@ -80,18 +102,18 @@ namespace Box.Parsing
                 WholeNumber );
 
         private static Parser<NString> NormalString = 
-            ParserUtil.Bind( Lit( "\"" ), () =>
-            ParserUtil.Bind( ParserUtil.ParseUntil( Lit( "\"" ) ), str => 
-            ParserUtil.Unit( new NString( str ) ) ) );
+            Bind( Lit( "\"" ), () =>
+            Bind( ParserUtil.ParseUntil( Lit( "\"" ) ), str => 
+            Unit( new NString( str ) ) ) );
 
         private static Parser<NString> RawString = 
-            ParserUtil.Bind( Lit( "[" ), () => 
-            ParserUtil.Bind( Lit( "=" )
+            Bind( Lit( "[" ), () => 
+            Bind( Lit( "=" )
                                 .ZeroOrMore()
                                 .Map( value => value.Aggregate( "", (a, b) => a + b  ) ), equals => 
-            ParserUtil.Bind( Lit( "[" ), () => 
-            ParserUtil.Bind( ParserUtil.ParseUntil( Lit( "]" + equals + "]" ) ), str => 
-            ParserUtil.Unit( new NString( str ) ) ) ) ) );
+            Bind( Lit( "[" ), () => 
+            Bind( ParserUtil.ParseUntil( Lit( "]" + equals + "]" ) ), str => 
+            Unit( new NString( str ) ) ) ) ) );
 
         public static Parser<NString> NString = 
             ParserUtil.Alternate(
@@ -99,18 +121,18 @@ namespace Box.Parsing
                 RawString );
 
         private static Parser<Empty> LineComment =
-            ParserUtil.Bind( Lit( "--" ), () =>
-            ParserUtil.Bind( ParserUtil.ParseUntil( ParserUtil.Alternate( EndLine, ParserUtil.End ) ), () =>
-            ParserUtil.Unit( new Empty() ) ) );
+            Bind( Lit( "--" ), () =>
+            Bind( ParserUtil.ParseUntil( ParserUtil.Alternate( EndLine, ParserUtil.End ) ), () =>
+            Unit( new Empty() ) ) );
 
         private static Parser<Empty> BlockComment = 
-            ParserUtil.Bind( Lit( "--[" ), () => 
-            ParserUtil.Bind( Lit( "=" )
+            Bind( Lit( "--[" ), () => 
+            Bind( Lit( "=" )
                                 .ZeroOrMore()
                                 .Map( value => value.Aggregate( "", (a, b) => a + b  ) ), equals => 
-            ParserUtil.Bind( Lit( "[" ), () => 
-            ParserUtil.Bind( ParserUtil.ParseUntil( Lit( "--]" + equals + "]" ) ), () => 
-            ParserUtil.Unit( new Empty() ) ) ) ) );
+            Bind( Lit( "[" ), () => 
+            Bind( ParserUtil.ParseUntil( Lit( "--]" + equals + "]" ) ), () => 
+            Unit( new Empty() ) ) ) ) );
 
         public static Parser<Empty> Comment = 
             ParserUtil.Alternate(
@@ -121,28 +143,28 @@ namespace Box.Parsing
 
             // TODO test
         public static Parser<Empty> Semi =
-            ParserUtil.Bind( ParserUtil.Whitespace, () =>
-            ParserUtil.Bind( Lit( ";" ), () => 
-            ParserUtil.Bind( ParserUtil.Whitespace, () =>
-            ParserUtil.Unit( new Empty() ) ) ) );
+            Bind( Ws, () =>
+            Bind( Lit( ";" ), () => 
+            Bind( Ws, () =>
+            Unit( new Empty() ) ) ) );
 
             // TODO test
         public static Parser<Return> Return =
-            ParserUtil.Bind( Lit( "return" ), () =>
-            ParserUtil.Bind( ParserUtil.Whitespace, () => 
-            ParserUtil.Bind( Expr, expr =>
-            ParserUtil.Bind( Semi, () =>
-            ParserUtil.Unit( new Return( expr ) ) ) ) ) ); 
+            Bind( Lit( "return" ), () =>
+            Bind( Ws, () => 
+            Bind( Expr, expr =>
+            Bind( Semi, () =>
+            Unit( new Return( expr ) ) ) ) ) ); 
 
         public static Parser<Expr> ParenExpr = 
-            ParserUtil.Bind( ParserUtil.Whitespace, () =>
-            ParserUtil.Bind( Lit( "(" ), () =>
-            ParserUtil.Bind( ParserUtil.Whitespace, () => 
-            ParserUtil.Bind( Expr, e => 
-            ParserUtil.Bind( ParserUtil.Whitespace, () => 
-            ParserUtil.Bind( Lit( ")" ), () =>
-            ParserUtil.Bind( ParserUtil.Whitespace, () => 
-            ParserUtil.Unit( e ) ) ) ) ) ) ) );
+            Bind( Ws, () =>
+            Bind( Lit( "(" ), () =>
+            Bind( Ws, () => 
+            Bind( Expr, e => 
+            Bind( Ws, () => 
+            Bind( Lit( ")" ), () =>
+            Bind( Ws, () => 
+            Unit( e ) ) ) ) ) ) ) );
 
         private static Parser<Expr> Cast<T>( Parser<T> p )
             where T : Expr 

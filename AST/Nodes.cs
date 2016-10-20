@@ -3,11 +3,11 @@ using Box;
 
 namespace Box.AST
 {
-    public class Boolean : Expr
+    public class NBoolean : Expr
     {
         public readonly bool Value;
 
-        public Boolean( bool value )
+        public NBoolean( bool value )
         {
             Value = value;
         }
