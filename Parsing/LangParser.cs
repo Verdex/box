@@ -109,8 +109,8 @@ namespace Box.Parsing
         private static Parser<NString> RawString = 
             Bind( Lit( "[" ), () => 
             Bind( Lit( "=" )
-                                .ZeroOrMore()
-                                .Map( value => value.Aggregate( "", (a, b) => a + b  ) ), equals => 
+                        .ZeroOrMore()
+                        .Map( value => value.Aggregate( "", (a, b) => a + b  ) ), equals => 
             Bind( Lit( "[" ), () => 
             Bind( ParserUtil.ParseUntil( Lit( "]" + equals + "]" ) ), str => 
             Unit( new NString( str ) ) ) ) ) );
