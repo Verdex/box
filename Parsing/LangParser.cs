@@ -160,6 +160,27 @@ namespace Box.Parsing
             Bind( Semi, () =>
             Unit( new Return( expr ) ) ) ) ) ) ); 
 
+            // TODO test
+        public static Parser<YieldReturn> YieldReturn = 
+            Bind( Ws, () => 
+            Bind( Lit( "yield" ), () =>
+            Bind( Ws, () => 
+            Bind( Lit( "return" ), () =>
+            Bind( Ws, () => 
+            Bind( Expr, expr =>
+            Bind( Semi, () =>
+            Unit( new YieldReturn( expr ) ) ) ) ) ) ) ) ); 
+
+            // TODO test
+        public static Parser<YieldBreak> YieldBreak = 
+            Bind( Ws, () => 
+            Bind( Lit( "yield" ), () =>
+            Bind( Ws, () => 
+            Bind( Lit( "break" ), () =>
+            Bind( Semi, () =>
+            Unit( new YieldBreak() ) ) ) ) ) ); 
+
+            // TODO test
         public static Parser<Expr> ParenExpr = 
             Bind( Ws, () =>
             Bind( Lit( "(" ), () =>

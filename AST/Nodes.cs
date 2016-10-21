@@ -56,6 +56,21 @@ namespace Box.AST
         }
     }
 
+    public class YieldReturn : Statement
+    {
+        public readonly Expr Expression;
+        public YieldReturn( Expr e )
+        {
+            Expression = e;
+        }
+    }
+
+    public class YieldBreak : Statement { }
+
+    public class Break : Statement { }
+
+    public class Continue : Statement { }
+
     // :(
     public interface Expr { }
     public interface Statement { }
