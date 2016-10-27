@@ -207,6 +207,23 @@ namespace Box.Parsing
             };
         }
 
+        public static Parser<char> EatCharIf( Func<char, bool> predicate ) 
+        {
+            return buffer =>
+            {
+                if ( buffer.Index < buffer.Text.Length && predicate( buffer.Text[buffer.Index] ) )
+                {
+                    var index = buffer.Index;
+                    buffer.Index++;
+                    return new ParseResult<char>( buffer.Text[index], buffer );
+                }
+                else
+                {
+                    return new ParseResult<char>( new FailData( buffer.Index ) ); 
+                }
+            };
+        }
+
         public static Parser<char> EatChar = buffer => 
         {
             if ( buffer.Index < buffer.Text.Length )
