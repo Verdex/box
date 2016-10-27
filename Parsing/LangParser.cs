@@ -190,7 +190,6 @@ namespace Box.Parsing
             Bind( Semi, () =>
             Unit( new Continue() ) ) ) ); 
 
-            // TODO test
         public static Parser<Expr> ParenExpr = 
             Bind( Ws, () =>
             Bind( Lit( "(" ), () =>
