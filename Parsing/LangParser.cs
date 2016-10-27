@@ -11,6 +11,11 @@ namespace Box.Parsing
         // For recursive definitions use properties.  Also make sure fields that
         // are defined in terms of other fields occur last.
 
+        private static Parser<T> Alt<T>( params Parser<T>[] parsers )
+        {
+            return ParserUtil.Alternate( parsers );
+        }
+
         private static Parser<string> Lit( string value )
         {
             return ParserUtil.Match( value );
@@ -32,14 +37,14 @@ namespace Box.Parsing
         } 
 
         public static Parser<Empty> EndLine =
-            ParserUtil.Alternate(
+            Alt(
                 Lit( "\r\n" ),
                 Lit( "\n" ),
                 Lit( "\r" ) ).Map( v => new Empty() );
 
                 // TODO probably need end of file in here too
         public static Parser<Empty> Ws =
-            ParserUtil.Alternate(
+            Alt(
                 EndLine,
                 CastEmpty( Lit( " " ) ),
                 CastEmpty( Lit( "\t" ) ),
@@ -47,13 +52,13 @@ namespace Box.Parsing
                 CastEmpty( Lit( "\v" ) ) ).ZeroOrMore().Map( v => new Empty() );
 
         public static Parser<NBoolean> Boolean =
-            ParserUtil.Alternate( 
+            Alt( 
                 Lit( "true" ), 
                 Lit( "false" ) )
             .Map( value => new NBoolean( value == "true" ) );
 
         private static Parser<int> Digits = 
-            ParserUtil.Alternate(
+            Alt(
                 Lit( "0" ),
                 Lit( "1" ),
                 Lit( "2" ),
@@ -69,7 +74,7 @@ namespace Box.Parsing
             .Map( value => int.Parse( value ) );
 
         private static Parser<string> NonNumSymbolChar =
-            ParserUtil.Alternate(
+            Alt(
                 ParserUtil.EatCharIf( Char.IsLetter ).Map( c => new String( c, 1 ) ),
                 Lit( "_" ),
                 Lit( "~" ),
@@ -78,7 +83,7 @@ namespace Box.Parsing
 
         public static Parser<string> Symbol =
             Bind( NonNumSymbolChar,            first => 
-            Bind( ParserUtil.Alternate( 
+            Bind( Alt( 
                       NonNumSymbolChar,
                       Digits.Map( d => d.ToString() ) )
                             .ZeroOrMore()
@@ -108,7 +113,7 @@ namespace Box.Parsing
             Bind( Lit( "." ), () =>
             Bind( Digits, deci => 
             Bind( 
-                ParserUtil.Alternate( 
+                Alt( 
                     Lit( "E" ),
                     Lit( "e" ) ), () =>
             Bind( Negative, negExp =>
@@ -116,7 +121,7 @@ namespace Box.Parsing
             Unit( new Number( whole, negWhole, exponent, negExp, deci ) ) ) ) ) ) ) ) );
             
         public static Parser<Number> Number =
-            ParserUtil.Alternate(
+            Alt(
                 // The order here matters.  If we start with WholeNumber, then
                 // we will miss parse an exponent and/or decimal.
                 ExponentNumber,
@@ -138,13 +143,13 @@ namespace Box.Parsing
             Unit( new NString( str ) ) ) ) ) );
 
         public static Parser<NString> NString = 
-            ParserUtil.Alternate(
+            Alt(
                 NormalString,
                 RawString );
 
         private static Parser<Empty> LineComment =
             Bind( Lit( "--" ), () =>
-            Bind( ParserUtil.ParseUntil( ParserUtil.Alternate( EndLine, ParserUtil.End ) ), () =>
+            Bind( ParserUtil.ParseUntil( Alt( EndLine, ParserUtil.End ) ), () =>
             Unit( new Empty() ) ) );
 
         private static Parser<Empty> BlockComment = 
@@ -157,7 +162,7 @@ namespace Box.Parsing
             Unit( new Empty() ) ) ) ) );
 
         public static Parser<Empty> Comment = 
-            ParserUtil.Alternate(
+            Alt(
                 // TODO test the toggle block sometime
                 // Line Comment needs to happen first in order to pull off the toggle block trick
                 LineComment,
@@ -229,7 +234,7 @@ namespace Box.Parsing
         }
              // TODO test when finished
         private static Parser<Expr> _expr = 
-            ParserUtil.Alternate( 
+            Alt( 
                 CastExpr( Boolean ),
                 CastExpr( Number ),
                 CastExpr( NString ),
