@@ -212,16 +212,15 @@ namespace Box.Parsing
             return p.Map( v => new Empty() );
         }
              // TODO test when finished
+        private static Parser<Expr> _expr = 
+            ParserUtil.Alternate( 
+                CastExpr( Boolean ),
+                CastExpr( Number ),
+                CastExpr( NString ),
+                ParenExpr );
         public static Parser<Expr> Expr
         {
-            get
-            {
-                return ParserUtil.Alternate( 
-                            CastExpr( Boolean ),
-                            CastExpr( Number ),
-                            CastExpr( NString ),
-                            ParenExpr );
-            }
+            get { return _expr; }
         }
     }
 }
