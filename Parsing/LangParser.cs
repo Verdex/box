@@ -68,6 +68,23 @@ namespace Box.Parsing
             .Map( value => value.Aggregate( "", (a, b) => a + b  ) )
             .Map( value => int.Parse( value ) );
 
+        private static Parser<string> NonNumSymbolChar =
+            ParserUtil.Alternate(
+                ParserUtil.EatCharIf( Char.IsLetter ).Map( c => new String( c, 1 ) ),
+                Lit( "_" ),
+                Lit( "~" ),
+                Lit( "@" ),
+                Lit( "$" ) );
+
+        public static Parser<string> Symbol =
+            Bind( NonNumSymbolChar,            first => 
+            Bind( ParserUtil.Alternate( 
+                      NonNumSymbolChar,
+                      Digits.Map( d => d.ToString() ) )
+                            .ZeroOrMore()
+                            .Map( value => value.Aggregate( "", (a, b) => a + b  ) ),   rest => 
+            Unit( first + rest ) ) );
+
         private static Parser<bool> Negative =
             Lit( "-" )
             .OneOrNone()
