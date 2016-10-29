@@ -1,5 +1,5 @@
 
-namespace Box 
+namespace Box.Utils 
 {
     public class Maybe<T>
     {
