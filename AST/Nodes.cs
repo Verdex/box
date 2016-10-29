@@ -82,6 +82,15 @@ namespace Box.AST
 
     public class Continue : Statement { }
 
+    public class UsingStatement : Statement
+    {
+        public readonly NamespaceDesignator Designator;
+        public UsingStatement( NamespaceDesignator d )
+        {
+            Designator = d;
+        }
+    }
+
     // :(
     public interface Expr { }
     public interface Statement { }

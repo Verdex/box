@@ -101,6 +101,14 @@ namespace Box.Parsing
             Bind( NamespaceList, l => 
             Unit( new NamespaceDesignator( new [] { s }.Concat( l ) ) ) ) );
 
+        public static Parser<UsingStatement> UsingStatement =
+            Bind( Ws, () => 
+            Bind( Lit( "using" ), () =>
+            Bind( Ws, () =>
+            Bind( NamespaceDesignator, nsd =>
+            Bind( Semi, () =>
+            Unit( new UsingStatement( nsd ) ) ) ) ) ) );
+
         private static Parser<bool> Negative =
             Lit( "-" )
             .OneOrNone()
