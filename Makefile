@@ -1,5 +1,5 @@
 
-UTILS = Utils/Maybe.cs
+UTILS = Utils/Maybe.cs Utils/DisplayArray.cs Utils/Extend.cs
 AST = AST/Nodes.cs
 PARSING = Parsing/ParserUtil.cs Parsing/LangParser.cs
 
