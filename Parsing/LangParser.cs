@@ -1,5 +1,6 @@
 
 using System;
+using System.Collections.Generic;
 using System.Linq;
 using Box.AST;
 
@@ -58,7 +59,7 @@ namespace Box.Parsing
             .Map( value => new NBoolean( value == "true" ) );
 
         private static Parser<int> Digits = 
-            Alt(
+            Alt( // TODO can use EatCharIf
                 Lit( "0" ),
                 Lit( "1" ),
                 Lit( "2" ),
@@ -89,6 +90,16 @@ namespace Box.Parsing
                             .ZeroOrMore()
                             .Map( value => value.Aggregate( "", (a, b) => a + b  ) ),   rest => 
             Unit( first + rest ) ) );
+
+        private static Parser<IEnumerable<String>> NamespaceList =
+            Bind( Lit( "." ), () =>
+            Bind( Symbol, s => 
+            Unit( s ) ) ).ZeroOrMore();
+
+        public static Parser<NamespaceDesignator> NamespaceDesignator =
+            Bind( Symbol, s =>
+            Bind( NamespaceList, l => 
+            Unit( new NamespaceDesignator( new [] { s }.Concat( l ) ) ) ) );
 
         private static Parser<bool> Negative =
             Lit( "-" )

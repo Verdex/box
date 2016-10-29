@@ -1,8 +1,19 @@
 
+using System.Collections.Generic;
 using Box;
 
 namespace Box.AST
 {
+    public class NamespaceDesignator
+    {
+        public readonly IEnumerable<string> Designator;
+
+        public NamespaceDesignator( IEnumerable<string> d )
+        {
+            Designator = d;
+        }
+    }
+
     public class NBoolean : Expr
     {
         public readonly bool Value;
