@@ -82,6 +82,17 @@ namespace Box.AST
 
     public class Continue : Statement { }
 
+    public class While : Statement
+    {
+        public readonly Expr Test;
+        public readonly IEnumerable<Statement> Statements;
+        public While( Expr test, IEnumerable<Statement> stm )
+        {
+            Test = test;
+            Statements = stm;
+        }
+    }
+
     public class UsingStatement : Statement
     {
         public readonly NamespaceDesignator Designator;

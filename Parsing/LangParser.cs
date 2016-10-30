@@ -12,6 +12,8 @@ namespace Box.Parsing
         // For recursive definitions use properties.  Also make sure fields that
         // are defined in terms of other fields occur last.
 
+        // TODO going to need to find a way to add in comments basically anywhere
+
         private static Parser<T> Alt<T>( params Parser<T>[] parsers )
         {
             return ParserUtil.Alternate( parsers );
@@ -231,6 +233,19 @@ namespace Box.Parsing
             Bind( Semi, () =>
             Unit( new Continue() ) ) ) ); 
 
+        public static Parser<While> While =
+            Bind( Ws, () =>
+            Bind( Lit( "while" ), () => 
+            Bind( Ws, () => 
+            Bind( Expr, test => 
+            Bind( Ws, () =>
+            Bind( Lit( "{" ), () =>
+            Bind( Ws, () => 
+            Bind( Statement.ZeroOrMore(), statements => // TODO whitespace between statements?
+            Bind( Ws, () => 
+            Bind( Lit( "}" ), () =>
+            Unit( new While( test, statements ) ) ) ) ) ) ) ) ) ) ) );
+
         public static Parser<Expr> ParenExpr = 
             Bind( Ws, () =>
             Bind( Lit( "(" ), () =>
@@ -240,6 +255,12 @@ namespace Box.Parsing
             Bind( Lit( ")" ), () =>
             Bind( Ws, () => 
             Unit( e ) ) ) ) ) ) ) );
+
+        private static Parser<Statement> CastStatement<T>( Parser<T> p )
+            where T : Statement
+        {
+            return p.Map( v => v as Statement );
+        }
 
         private static Parser<Expr> CastExpr<T>( Parser<T> p )
             where T : Expr 
@@ -251,6 +272,20 @@ namespace Box.Parsing
         {
             return p.Map( v => new Empty() );
         }
+
+            // TODO test when finished
+        private static Parser<Statement> _stm =
+            Alt(
+                CastStatement( Return ),
+                CastStatement( YieldReturn ),
+                CastStatement( YieldBreak ),
+                CastStatement( UsingStatement ) );
+        public static Parser<Statement> Statement 
+        {
+            get { return _stm; }
+        }
+            
+
              // TODO test when finished
         private static Parser<Expr> _expr = 
             Alt( 
