@@ -54,6 +54,33 @@ namespace Box.Parsing
                 CastEmpty( Lit( "\f" ) ),
                 CastEmpty( Lit( "\v" ) ) ).ZeroOrMore().Map( v => new Empty() );
 
+        private static Parser<Empty> LineComment =
+            Bind( Lit( "--" ), () =>
+            Bind( ParserUtil.ParseUntil( Alt( EndLine, ParserUtil.End ) ), () =>
+            Unit( new Empty() ) ) );
+
+        private static Parser<Empty> BlockComment = 
+            Bind( Lit( "--[" ), () => 
+            Bind( Lit( "=" )
+                                .ZeroOrMore()
+                                .Map( value => value.Aggregate( "", (a, b) => a + b  ) ), equals => 
+            Bind( Lit( "[" ), () => 
+            Bind( ParserUtil.ParseUntil( Lit( "--]" + equals + "]" ) ), () => 
+            Unit( new Empty() ) ) ) ) );
+
+        public static Parser<Empty> Comment = 
+            Alt(
+                // TODO test the toggle block sometime
+                // Line Comment needs to happen first in order to pull off the toggle block trick
+                LineComment,
+                BlockComment );
+
+        public static Parser<Empty> Junk = 
+            Bind( Ws, () =>
+            Bind( Comment, () =>
+            Bind( Ws, () =>
+            Unit( new Empty() ) ) ) );
+
         public static Parser<NBoolean> Boolean =
             Alt( 
                 Lit( "true" ), 
@@ -167,27 +194,6 @@ namespace Box.Parsing
             Alt(
                 NormalString,
                 RawString );
-
-        private static Parser<Empty> LineComment =
-            Bind( Lit( "--" ), () =>
-            Bind( ParserUtil.ParseUntil( Alt( EndLine, ParserUtil.End ) ), () =>
-            Unit( new Empty() ) ) );
-
-        private static Parser<Empty> BlockComment = 
-            Bind( Lit( "--[" ), () => 
-            Bind( Lit( "=" )
-                                .ZeroOrMore()
-                                .Map( value => value.Aggregate( "", (a, b) => a + b  ) ), equals => 
-            Bind( Lit( "[" ), () => 
-            Bind( ParserUtil.ParseUntil( Lit( "--]" + equals + "]" ) ), () => 
-            Unit( new Empty() ) ) ) ) );
-
-        public static Parser<Empty> Comment = 
-            Alt(
-                // TODO test the toggle block sometime
-                // Line Comment needs to happen first in order to pull off the toggle block trick
-                LineComment,
-                BlockComment );
 
         public static Parser<Empty> Semi =
             Bind( Ws, () =>
