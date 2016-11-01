@@ -1,14 +1,21 @@
 
 using System;
+using System.Reflection;
 
 namespace Box.Tests
 {
     public static class TestRunner
     {
         public static void RunTests<T>()
-            where T : new()
         {
-            var tests = new T();
+            var x = typeof( T ).GetMethods( BindingFlags.Public );
+            foreach ( var xlet in x )
+            {
+                foreach( var z in xlet.GetCustomAttributes( typeof( Test ), true ) )
+                {
+                    Console.WriteLine( "Blarg" + z );
+                }
+            }
 
         }
     }
